@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SchoolStock | Inventory System (Dark Mode)</title>
+
+<style>
+:root {
+    --primary: #8b5cf6;
+    --primary-dark: #7c3aed;
+    --sidebar-from: #121026;
+    --sidebar-to: #1e1b4b;
+    --bg: #0f172a;
+    --panel-bg: #1e293b;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #334155;
+    --white: #ffffff;
+    --green: #34d399;
+    --red: #f87171;
+    --orange: #fbbf24;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+button, input, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR - EXTRA LARGE AND PROMINENT */
+.sidebar {
+    width: 300px;
+    background: linear-gradient(180deg, var(--sidebar-from), var(--sidebar-to));
+    color: white;
+    padding: 35px 22px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+}
+
+.logo {
+    font-size: 34px;
+    font-weight: 800;
+    margin: 10px 10px 45px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+}
+
+.logo span {
+    color: #c084fc;
+}
+
+.menu-label {
+    font-size: 14px;
+    color: #94a3b8;
+    margin: 30px 10px 15px;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    color: #e2e8f0;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(139, 92, 246, 0.3);
+    color: #c084fc;
+}
+
+.sidebar-footer {
+    margin: 65px 10px 10px;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    min-width: 0;
+    padding: 35px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 32px;
+}
+
+.topbar h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+
+.topbar p {
+    font-size: 15px;
+    color: var(--muted);
+}
+
+.admin {
+    background: var(--panel-bg);
+    color: var(--text);
+    padding: 14px 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 3px 12px rgba(0,0,0,.2);
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+/* PAGES */
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* DASHBOARD CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 17px;
+    margin-bottom: 24px;
+}
+
+.card {
+    background: var(--panel-bg);
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.2);
+    border: 1px solid var(--border);
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-label {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    background: rgba(139, 92, 246, 0.15);
+    color: #c084fc;
+    font-size: 18px;
+}
+
+.card h2 {
+    font-size: 27px;
+    margin-top: 15px;
+    color: var(--text);
+}
+
+.card small {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* CONTENT BOXES */
+.panel {
+    background: var(--panel-bg);
+    padding: 23px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 15px rgba(0,0,0,.2);
+    margin-bottom: 22px;
+}
+
+.panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.panel-heading h2 {
+    font-size: 19px;
+    color: var(--text);
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* BUTTONS */
+.btn {
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-light {
+    background: rgba(139, 92, 246, 0.15);
+    color: #c084fc;
+}
+
+.btn-danger {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--red);
+}
+
+.btn-gray {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+/* INPUTS */
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+input, select {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    background: #0f172a;
+    color: var(--text);
+    font-size: 14px;
+    min-width: 0;
+}
+
+input:focus, select:focus {
+    border-color: var(--primary);
+}
+
+.search-input {
+    flex: 1;
+    min-width: 180px;
+}
+
+/* TABLE */
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th {
+    background: #111827;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: .4px;
+    text-align: left;
+    padding: 16px;
+    white-space: nowrap;
+}
+
+td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    vertical-align: middle;
+    color: var(--text);
+}
+
+.product-name {
+    font-weight: bold;
+    color: var(--text);
+}
+
+.status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.available {
+    background: rgba(52, 211, 153, 0.15);
+    color: var(--green);
+}
+
+.low {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--orange);
+}
+
+.out {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--red);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-buttons button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.edit-btn {
+    background: rgba(139, 92, 246, 0.15);
+    color: #c084fc;
+}
+
+.delete-btn {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--red);
+}
+
+.empty {
+    text-align: center;
+    padding: 35px;
+    color: var(--muted);
+}
+
+/* DASHBOARD LOWER AREA */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+}
+
+.alert-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 10px;
+}
+
+.alert-item:last-child {
+    border-bottom: none;
+}
+
+.alert-item strong {
+    font-size: 14px;
+    color: var(--text);
+}
+
+.alert-item small {
+    color: var(--muted);
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.category-row {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.category-row:last-child {
+    border-bottom: none;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    z-index: 10;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    background: var(--panel-bg);
+    width: 440px;
+    max-width: 100%;
+    padding: 28px;
+    border-radius: 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.modal-box h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+
+.modal-box .muted {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+/* CUSTOM CONFIRMATION MODAL */
+.custom-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    z-index: 30;
+}
+
+.custom-modal.show {
+    display: flex;
+}
+
+.custom-modal-box {
+    background: var(--panel-bg);
+    width: 400px;
+    max-width: 100%;
+    padding: 28px;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.custom-modal-box h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--text);
+}
+
+.custom-modal-box p {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+}
+
+.custom-modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* NOTIFICATION TOAST */
+#toast {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    background: #1e1b4b;
+    border: 1px solid var(--primary);
+    color: white;
+    padding: 16px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+    z-index: 20;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+#toast.show {
+    opacity: 1;
+}
+
+/* RESPONSIVE */
+@media(max-width:1050px) {
+    .cards {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media(max-width:750px) {
+    .layout {
+        display: block;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 24px;
+    }
+
+    .logo {
+        margin: 5px 8px 20px;
+        font-size: 30px;
+    }
+
+    .menu-label {
+        display: none;
+    }
+
+    .nav-link {
+        display: inline-flex;
+        margin: 0 8px 10px 0;
+        padding: 14px 20px;
+        font-size: 16px;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    .main {
+        padding: 22px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width:480px) {
+    .cards {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .card h2 {
+        font-size: 24px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .panel-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo">School<span>Stock</span></div>
+
+    <p class="menu-label">MAIN MENU</p>
+
+    <nav>
+        <a class="nav-link active" data-page="dashboard" onclick="navigate('dashboard')">
+            ▦ Dashboard
+        </a>
+
+        <a class="nav-link" data-page="products" onclick="navigate('products')">
+            ▣ Product Management
+        </a>
+
+        <a class="nav-link" data-page="inventory" onclick="navigate('inventory')">
+            ▤ Inventory
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        SchoolStock Inventory System<br>
+        Version 2.0 (Dark Mode)
+    </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+    <header class="topbar">
+        <div>
+            <h1 id="pageTitle">Dashboard</h1>
+            <p id="pageDescription">Welcome to your school supplies inventory system.</p>
+        </div>
+
+        <div class="admin">👤 Administrator</div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section class="page active" id="dashboard">
+
+        <div class="cards">
+
+            <div class="card">
+                <div class="card-top">
+                    <span class="card-label">Total Products</span>
+                    <span class="card-icon">▣</span>
+                </div>
+                <h2 id="totalProducts">0</h2>
+                <small>Registered products</small>
+            </div>
+
+            <div class="card">
+                <div class="card-top">
+                    <span class="card-label">Total Stock</span>
+                    <span class="card-icon">▤</span>
+                </div>
+                <h2 id="totalStock">0</h2>
+                <small>Total available units</small>
+            </div>
+
+            <div class="card">
+                <div class="card-top">
+                    <span class="card-label">Low Stock</span>
+                    <span class="card-icon">⚠</span>
+                </div>
+                <h2 id="lowStock">0</h2>
+                <small>Products needing restock</small>
+            </div>
+
+            <div class="card">
+                <div class="card-top">
+                    <span class="card-label">Out of Stock</span>
+                    <span class="card-icon">!</span>
+                </div>
+                <h2 id="outStock">0</h2>
+                <small>Unavailable products</small>
+            </div>
+
+        </div>
+
+        <div class="dashboard-grid">
+
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2>Low Stock Alerts</h2>
+                    <span class="muted">Stock quantity of 10 or less</span>
+                </div>
+                <div id="lowStockList"></div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2>Category Summary</h2>
+                </div>
+                <div id="categorySummary"></div>
+            </div>
+
+        </div>
+
+        <div class="panel">
+            <div class="panel-heading">
+                <h2>Inventory Value</h2>
+            </div>
+            <h2 id="inventoryValue">₱0.00</h2>
+            <p class="muted" style="margin-top:7px">
+                Estimated value based on product price multiplied by quantity.
+            </p>
+        </div>
+
+    </section>
+
+    <!-- PRODUCT MANAGEMENT -->
+    <section class="page" id="products">
+
+        <div class="panel">
+
+            <div class="panel-heading">
+                <div>
+                    <h2>Product Management</h2>
+                    <p class="muted" style="margin-top:5px">
+                        Add, view, update, and delete school supplies.
+                    </p>
+                </div>
+
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    + Add Product
+                </button>
+            </div>
+
+            <div class="controls">
+                <input
+                    class="search-input"
+                    id="productSearch"
+                    type="search"
+                    placeholder="Search product name..."
+                    oninput="renderAll()"
+                >
+
+                <select id="productCategoryFilter" onchange="renderAll()">
+                    <option value="">All Categories</option>
+                    <option>Writing Materials</option>
+                    <option>Paper Products</option>
+                    <option>School Supplies</option>
+                    <option>Art Materials</option>
+                </select>
+
+                <button class="btn btn-light" onclick="exportInventoryCSV()">
+                    ↓ Export CSV
+                </button>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PRODUCT NAME</th>
+                            <th>CATEGORY</th>
+                            <th>PRICE</th>
+                            <th>QUANTITY</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTable"></tbody>
+                </table>
+            </div>
+
+            <p class="muted" id="productCount" style="margin-top:15px"></p>
+
+        </div>
+
+    </section>
+
+    <!-- INVENTORY -->
+    <section class="page" id="inventory">
+
+        <div class="panel">
+
+            <div class="panel-heading">
+                <div>
+                    <h2>Inventory Overview</h2>
+                    <p class="muted" style="margin-top:5px">
+                        Monitor product quantities and stock availability.
+                    </p>
+                </div>
+
+                <button class="btn btn-light" onclick="exportInventoryCSV()">
+                    ↓ Export Inventory
+                </button>
+            </div>
+
+            <div class="controls">
+                <input
+                    class="search-input"
+                    id="inventorySearch"
+                    type="search"
+                    placeholder="Search inventory..."
+                    oninput="renderAll()"
+                >
+
+                <select id="inventoryStatusFilter" onchange="renderAll()">
+                    <option value="">All Stock Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Low Stock">Low Stock</option>
+                    <option value="Out of Stock">Out of Stock</option>
+                </select>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PRODUCT NAME</th>
+                            <th>CATEGORY</th>
+                            <th>PRICE</th>
+                            <th>QUANTITY</th>
+                            <th>STOCK STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTable"></tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal" id="productModal">
+    <div class="modal-box">
+
+        <h2 id="modalTitle">Add New Product</h2>
+        <p class="muted">Enter the product information below.</p>
+
+        <form id="productForm">
+
+            <input type="hidden" id="editId">
+
+            <div class="form-group">
+                <label for="productName">Product Name</label>
+                <input id="productName" type="text"
+                    placeholder="Enter product name" maxlength="80" required>
+            </div>
+
+            <div class="form-group">
+                <label for="productCategory">Category</label>
+                <select id="productCategory" required>
+                    <option value="">Select category</option>
+                    <option>Writing Materials</option>
+                    <option>Paper Products</option>
+                    <option>School Supplies</option>
+                    <option>Art Materials</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="productPrice">Price (₱)</label>
+                <input id="productPrice" type="number"
+                    placeholder="Enter price" min="0" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="productQuantity">Quantity</label>
+                <input id="productQuantity" type="number"
+                    placeholder="Enter quantity" min="0" step="1" required>
+            </div>
+
+            <div class="form-buttons">
+                <button type="button" class="btn btn-gray" onclick="closeModal()">
+                    Cancel
+                </button>
+
+                <button type="submit" class="btn btn-primary">
+                    Save Product
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- CUSTOM DELETE CONFIRMATION MODAL -->
+<div class="custom-modal" id="deleteModal">
+    <div class="custom-modal-box">
+        <h3>Delete Product</h3>
+        <p id="deleteModalText">Are you sure you want to delete this item?</p>
+        <div class="custom-modal-buttons">
+            <button class="btn btn-gray" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "schoolStockProductsDarkV2";
+
+const SAMPLE_PRODUCTS = [
+    // Writing Materials (10 items)
+    {id: 1, name: "Ballpen (Black)", category: "Writing Materials", price: 12, quantity: 50},
+    {id: 2, name: "Ballpen (Blue)", category: "Writing Materials", price: 12, quantity: 45},
+    {id: 3, name: "Ballpen (Red)", category: "Writing Materials", price: 12, quantity: 30},
+    {id: 4, name: "Standard Pencil", category: "Writing Materials", price: 10, quantity: 8},
+    {id: 5, name: "Mechanical Pencil", category: "Writing Materials", price: 25, quantity: 15},
+    {id: 6, name: "Highlighter (Yellow)", category: "Writing Materials", price: 22, quantity: 20},
+    {id: 7, name: "Highlighter (Pink)", category: "Writing Materials", price: 22, quantity: 12},
+    {id: 8, name: "Permanent Marker", category: "Writing Materials", price: 30, quantity: 6},
+    {id: 9, name: "Whiteboard Marker", category: "Writing Materials", price: 35, quantity: 18},
+    {id: 10, name: "Gel Pen Set", category: "Writing Materials", price: 85, quantity: 9},
+
+    // Paper Products (10 items)
+    {id: 11, name: "Composition Notebook", category: "Paper Products", price: 35, quantity: 30},
+    {id: 12, name: "Spiral Notebook", category: "Paper Products", price: 40, quantity: 25},
+    {id: 13, name: "Yellow Pad Paper", category: "Paper Products", price: 45, quantity: 40},
+    {id: 14, name: "Intermediate Pad", category: "Paper Products", price: 38, quantity: 22},
+    {id: 15, name: "A4 Bond Paper (Ream)", category: "Paper Products", price: 220, quantity: 10},
+    {id: 16, name: "Short Bond Paper (Ream)", category: "Paper Products", price: 190, quantity: 14},
+    {id: 17, name: "Long Bond Paper (Ream)", category: "Paper Products", price: 210, quantity: 7},
+    {id: 18, name: "Index Cards (Pack)", category: "Paper Products", price: 25, quantity: 35},
+    {id: 19, name: "Sticky Notes", category: "Paper Products", price: 30, quantity: 18},
+    {id: 20, name: "Graphing Paper", category: "Paper Products", price: 28, quantity: 5},
+
+    // School Supplies (10 items)
+    {id: 21, name: "Plastic Ruler (12in)", category: "School Supplies", price: 15, quantity: 50},
+    {id: 22, name: "Metal Compass Set", category: "School Supplies", price: 65, quantity: 12},
+    {id: 23, name: "Eraser (White)", category: "School Supplies", price: 8, quantity: 40},
+    {id: 24, name: "Plastic Pencil Case", category: "School Supplies", price: 45, quantity: 14},
+    {id: 25, name: "Correction Tape", category: "School Supplies", price: 35, quantity: 25},
+    {id: 26, name: "Safety Scissors", category: "School Supplies", price: 25, quantity: 19},
+    {id: 27, name: "Glue Stick", category: "School Supplies", price: 18, quantity: 30},
+    {id: 28, name: "Liquid School Glue", category: "School Supplies", price: 24, quantity: 16},
+    {id: 29, name: "Transparent Tape", category: "School Supplies", price: 20, quantity: 28},
+    {id: 30, name: "Heavy Duty Stapler", category: "School Supplies", price: 120, quantity: 4},
+
+    // Art Materials (10 items)
+    {id: 31, name: "Crayons (16 colors)", category: "Art Materials", price: 45, quantity: 0},
+    {id: 32, name: "Oil Pastels (24 pcs)", category: "Art Materials", price: 95, quantity: 11},
+    {id: 33, name: "Watercolor Set", category: "Art Materials", price: 75, quantity: 8},
+    {id: 34, name: "Poster Paint (Primary)", category: "Art Materials", price: 130, quantity: 6},
+    {id: 35, name: "Paint Brush Set", category: "Art Materials", price: 85, quantity: 13},
+    {id: 36, name: "Colored Construction Paper", category: "Art Materials", price: 50, quantity: 22},
+    {id: 37, name: "Sketch Pad", category: "Art Materials", price: 60, quantity: 15},
+    {id: 38, name: "Modeling Clay", category: "Art Materials", price: 55, quantity: 10},
+    {id: 39, name: "Glitter Glue Pack", category: "Art Materials", price: 40, quantity: 17},
+    {id: 40, name: "Origami Paper Pack", category: "Art Materials", price: 35, quantity: 25}
+];
+
+let products = loadProducts();
+let toastTimer = null;
+let pendingDeleteId = null;
+
+function loadProducts() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved === null) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_PRODUCTS));
+            return SAMPLE_PRODUCTS.map(p => ({...p}));
+        }
+        const data = JSON.parse(saved);
+        if (!Array.isArray(data)) {
+            return SAMPLE_PRODUCTS.map(p => ({...p}));
+        }
+        return data.filter(p =>
+            p &&
+            Number.isInteger(p.id) &&
+            typeof p.name === "string" &&
+            typeof p.category === "string" &&
+            Number.isFinite(Number(p.price)) &&
+            Number.isInteger(Number(p.quantity)) &&
+            Number(p.price) >= 0 &&
+            Number(p.quantity) >= 0
+        ).map(p => ({
+            id: p.id,
+            name: p.name,
+            category: p.category,
+            price: Number(p.price),
+            quantity: Number(p.quantity)
+        }));
+    } catch (error) {
+        return SAMPLE_PRODUCTS.map(p => ({...p}));
+    }
+}
+
+function saveProducts() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+        return true;
+    } catch (error) {
+        showToast("Unable to save data. Browser storage may be full.");
+        return false;
+    }
+}
+
+function navigate(pageId) {
+    const page = document.getElementById(pageId);
+    if (!page) return;
+
+    document.querySelectorAll(".page").forEach(section => {
+        section.classList.remove("active");
+    });
+    page.classList.add("active");
+
+    document.querySelectorAll(".nav-link").forEach(link => {
+        link.classList.toggle("active", link.dataset.page === pageId);
+    });
+
+    const pageInfo = {
+        dashboard: [
+            "Dashboard",
+            "Welcome to your school supplies inventory system."
+        ],
+        products: [
+            "Product Management",
+            "Manage your registered school supplies."
+        ],
+        inventory: [
+            "Inventory",
+            "Monitor your stock levels and product availability."
+        ]
+    };
+
+    document.getElementById("pageTitle").textContent = pageInfo[pageId][0];
+    document.getElementById("pageDescription").textContent = pageInfo[pageId][1];
+
+    renderAll();
+}
+
+function getStatus(quantity) {
+    if (quantity === 0) {
+        return {name: "Out of Stock", className: "out"};
+    }
+    if (quantity <= 10) {
+        return {name: "Low Stock", className: "low"};
+    }
+    return {name: "Available", className: "available"};
+}
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+}
+
+function money(value) {
+    return "₱" + Number(value).toLocaleString("en-PH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function renderAll() {
+    renderDashboard();
+    renderProducts();
+    renderInventory();
+}
+
+function renderDashboard() {
+    const totalProducts = products.length;
+    const totalStock = products.reduce((sum, p) => sum + p.quantity, 0);
+    const lowStock = products.filter(p => p.quantity > 0 && p.quantity <= 10).length;
+    const outStock = products.filter(p => p.quantity === 0).length;
+    const totalValue = products.reduce((sum, p) => sum + p.price * p.quantity, 0);
+
+    document.getElementById("totalProducts").textContent = totalProducts;
+    document.getElementById("totalStock").textContent = totalStock;
+    document.getElementById("lowStock").textContent = lowStock;
+    document.getElementById("outStock").textContent = outStock;
+    document.getElementById("inventoryValue").textContent = money(totalValue);
+
+    const lowList = document.getElementById("lowStockList");
+    const alerts = products.filter(p => p.quantity <= 10);
+
+    if (alerts.length === 0) {
+        lowList.innerHTML = '<p class="empty">No low-stock alerts. Everything looks good!</p>';
+    } else {
+        lowList.innerHTML = alerts.map(p => {
+            const status = getStatus(p.quantity);
+            return `
+                <div class="alert-item">
+                    <div>
+                        <strong>${escapeHTML(p.name)}</strong>
+                        <small>${escapeHTML(p.category)}</small>
+                    </div>
+                    <span class="status ${status.className}">
+                        ${p.quantity} left
+                    </span>
+                </div>
+            `;
+        }).join("");
+    }
+
+    const categories = [
+        "Writing Materials",
+        "Paper Products",
+        "School Supplies",
+        "Art Materials"
+    ];
+
+    document.getElementById("categorySummary").innerHTML =
+        categories.map(category => {
+            const count = products.filter(p => p.category === category).length;
+            return `
+                <div class="category-row">
+                    <span>${category}</span>
+                    <strong>${count}</strong>
+                </div>
+            `;
+        }).join("");
+}
+
+function renderProducts() {
+    const table = document.getElementById("productTable");
+    const search = document.getElementById("productSearch").value.trim().toLowerCase();
+    const category = document.getElementById("productCategoryFilter").value;
+
+    const filtered = products.filter(p => {
+        return p.name.toLowerCase().includes(search) &&
+               (!category || p.category === category);
+    });
+
+    if (filtered.length === 0) {
+        table.innerHTML = `
+            <tr><td colspan="6" class="empty">No products found.</td></tr>
+        `;
+    } else {
+        table.innerHTML = filtered.map(p => {
+            const status = getStatus(p.quantity);
+            return `
+                <tr>
+                    <td class="product-name">${escapeHTML(p.name)}</td>
+                    <td>${escapeHTML(p.category)}</td>
+                    <td>${money(p.price)}</td>
+                    <td>${p.quantity}</td>
+                    <td>
+                        <span class="status ${status.className}">
+                            ${status.name}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="edit-btn" onclick="editProduct(${p.id})">Edit</button>
+                            <button class="delete-btn" onclick="promptDelete(${p.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+    }
+
+    document.getElementById("productCount").textContent =
+        `Showing ${filtered.length} of ${products.length} products`;
+}
+
+function renderInventory() {
+    const table = document.getElementById("inventoryTable");
+    const search = document.getElementById("inventorySearch").value.trim().toLowerCase();
+    const filter = document.getElementById("inventoryStatusFilter").value;
+
+    const filtered = products.filter(p => {
+        const status = getStatus(p.quantity);
+        return p.name.toLowerCase().includes(search) &&
+               (!filter || status.name === filter);
+    });
+
+    if (filtered.length === 0) {
+        table.innerHTML = `
+            <tr><td colspan="6" class="empty">No inventory records found.</td></tr>
+        `;
+    } else {
+        table.innerHTML = filtered.map(p => {
+            const status = getStatus(p.quantity);
+            return `
+                <tr>
+                    <td class="product-name">${escapeHTML(p.name)}</td>
+                    <td>${escapeHTML(p.category)}</td>
+                    <td>${money(p.price)}</td>
+                    <td>${p.quantity}</td>
+                    <td>
+                        <span class="status ${status.className}">
+                            ${status.name}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="edit-btn" onclick="editProduct(${p.id})">Update Stock</button>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+    }
+}
+
+function openAddModal() {
+    document.getElementById("productForm").reset();
+    document.getElementById("editId").value = "";
+    document.getElementById("modalTitle").textContent = "Add New Product";
+    document.getElementById("productModal").classList.add("show");
+    document.getElementById("productName").focus();
+}
+
+function closeModal() {
+    document.getElementById("productModal").classList.remove("show");
+}
+
+document.getElementById("productForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("productName").value.trim();
+    const category = document.getElementById("productCategory").value;
+    const priceText = document.getElementById("productPrice").value;
+    const quantityText = document.getElementById("productQuantity").value;
+    const editId = document.getElementById("editId").value;
+
+    if (!name || !category || priceText === "" || quantityText === "") {
+        showToast("Please complete all required fields.");
+        return;
+    }
+
+    const price = Number(priceText);
+    const quantity = Number(quantityText);
+
+    if (!Number.isFinite(price) || price < 0 ||
+        !Number.isInteger(quantity) || quantity < 0) {
+        showToast("Enter a valid price and whole-number quantity.");
+        return;
+    }
+
+    const duplicate = products.some(p =>
+        p.name.toLowerCase() === name.toLowerCase() &&
+        p.id !== Number(editId)
+    );
+
+    if (duplicate) {
+        showToast("A product with that name already exists.");
+        return;
+    }
+
+    const newProduct = {
+        id: editId ? Number(editId) : Date.now() + Math.floor(Math.random() * 1000),
+        name,
+        category,
+        price,
+        quantity
+    };
+
+    const previousProducts = [...products];
+
+    if (editId) {
+        const index = products.findIndex(p => p.id === Number(editId));
+        if (index === -1) {
+            showToast("Product not found.");
+            return;
+        }
+        products[index] = newProduct;
+    } else {
+        products.push(newProduct);
+    }
+
+    if (!saveProducts()) {
+        products = previousProducts;
+        return;
+    }
+
+    closeModal();
+    renderAll();
+    showToast(editId ? "Product updated successfully!" : "Product added successfully!");
+});
+
+function editProduct(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) {
+        showToast("Product not found.");
+        return;
+    }
+
+    document.getElementById("editId").value = product.id;
+    document.getElementById("productName").value = product.name;
+    document.getElementById("productCategory").value = product.category;
+    document.getElementById("productPrice").value = product.price;
+    document.getElementById("productQuantity").value = product.quantity;
+    document.getElementById("modalTitle").textContent = "Edit Product";
+
+    document.getElementById("productModal").classList.add("show");
+}
+
+function promptDelete(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) {
+        showToast("Product not found.");
+        return;
+    }
+
+    pendingDeleteId = id;
+    document.getElementById("deleteModalText").textContent = `Are you sure you want to delete "${product.name}"?`;
+    document.getElementById("deleteModal").classList.add("show");
+}
+
+function closeDeleteModal() {
+    pendingDeleteId = null;
+    document.getElementById("deleteModal").classList.remove("show");
+}
+
+document.getElementById("confirmDeleteBtn").addEventListener("click", function() {
+    if (pendingDeleteId === null) return;
+
+    const previousProducts = [...products];
+    products = products.filter(p => p.id !== pendingDeleteId);
+
+    if (!saveProducts()) {
+        products = previousProducts;
+        closeDeleteModal();
+        return;
+    }
+
+    closeDeleteModal();
+    renderAll();
+    showToast("Product deleted successfully!");
+});
+
+function exportInventoryCSV() {
+    if (products.length === 0) {
+        showToast("There are no products to export.");
+        return;
+    }
+
+    const headers = [
+        "Product Name",
+        "Category",
+        "Price",
+        "Quantity",
+        "Stock Status"
+    ];
+
+    const rows = products.map(p => [
+        p.name,
+        p.category,
+        p.price,
+        p.quantity,
+        getStatus(p.quantity).name
+    ]);
+
+    function csvCell(value) {
+        let text = String(value);
+        if (/^[=+\-@\t\r]/.test(text)) {
+            text = "'" + text;
+        }
+        return '"' + text.replace(/"/g, '""') + '"';
+    }
+
+    const csv = [headers, ...rows]
+        .map(row => row.map(csvCell).join(","))
+        .join("\r\n");
+
+    const blob = new Blob(["\uFEFF" + csv], {
+        type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    const timestamp = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `SchoolStock_Inventory_${timestamp}.csv`;
+    
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+    showToast("Inventory exported successfully!");
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+document.getElementById("productModal").addEventListener("click", function(event) {
+    if (event.target === this) {
+        closeModal();
+    }
+});
+
+document.getElementById("deleteModal").addEventListener("click", function(event) {
+    if (event.target === this) {
+        closeDeleteModal();
+    }
+});
+
+renderAll();
+</script>
+
+</body>
+</html>
